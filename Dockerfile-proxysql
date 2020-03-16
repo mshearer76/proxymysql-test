@@ -1,0 +1,19 @@
+FROM debian:stretch-slim
+
+ARG BUILD_VERSION=unspecified
+LABEL build_version=$BUILD_VERSION
+
+RUN apt-get -qq update && \
+  apt-get install -qq -y wget lsb-release gnupg apt-transport-https ca-certificates curl jq mysql-client iputils-ping && \
+  wget -O - 'https://repo.proxysql.com/ProxySQL/repo_pub_key' | apt-key add - && \
+  echo deb https://repo.proxysql.com/ProxySQL/proxysql-2.0.x/$(lsb_release -sc)/ ./ | tee /etc/apt/sources.list.d/proxysql.list && \
+  apt-get -qq update && \
+  apt-get install -y -qq proxysql && \
+  rm -rf /var/lib/apt/lists/*
+
+RUN wget -q -O /usr/bin/orchestrator-client https://raw.githubusercontent.com/github/orchestrator/master/resources/bin/orchestrator-client && \
+  chmod +x /usr/bin/orchestrator-client
+
+RUN wget -q -O /usr/bin/proxysql-admin https://raw.githubusercontent.com/alikrubin/proxysql-admin-tool/v1.4/proxysql-admin && \
+  chmod +x /usr/bin/proxysql-admin
+

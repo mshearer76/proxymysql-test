@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+
+  mysql:
+    image: mysql:8.0.17
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: mydb
+    ports:
+      - "3308:3306"
+
+  proxysql:
+    build:
+      dockerfile: Dockerfile-proxysql
+      context: .
+    entrypoint: /bin/bash -c 'while [ 1 ]; do /usr/bin/proxysql -f -D /var/lib/proxysql -d -c /etc/proxysql.cfg; done'
+    environment:
+      - PROXYSQL_DATADIR='/var/lib/proxysql'
+      - PROXYSQL_USERNAME='admin'
+      - PROXYSQL_PASSWORD='admin'
+      - PROXYSQL_HOSTNAME='127.0.0.1'
+      - PROXYSQL_PORT='6032'
+      - CLUSTER_USERNAME="monitor"
+      - CLUSTER_PASSWORD="monitor"
+    volumes:
+      - /Users/mshearer/go/src/github.com/go-sql-driver-test/proxysql.cfg:/etc/proxysql.cfg
+    ports:
+      - "16032:6032"
+      - "16033:6033"
+      - "16080:6080"
+
+
