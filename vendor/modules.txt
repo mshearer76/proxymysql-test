@@ -1,0 +1,3 @@
+# github.com/mshearer76/mysql v1.3.0-debug
+## explicit
+github.com/mshearer76/mysql

@@ -3,32 +3,30 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/mshearer76/mysql"
 	"log"
 )
 
 func main() {
-	for {
 		db, err := sql.Open("mysql", "root:password@tcp(127.0.0.1:16033)/mydb")
 		if err != nil {
 			panic(err.Error()) // Just for example purpose. You should use proper error handling instead of panic
 		}
+		defer db.Close()
 
-		rows, err := db.Query("select @@max_allowed_packet")
+		rows, err := db.Query("select @@hostname")
 		if err != nil {
 			fmt.Println(err.Error())
 		} else {
-			var max_allowed_packet int
+			var hostname string
 			for rows.Next() {
-				err := rows.Scan(&max_allowed_packet)
+				err := rows.Scan(&hostname)
 				if err != nil {
 					log.Fatal(err)
 				}
-				fmt.Printf("max_allowed_packet = %d\n", max_allowed_packet)
+				fmt.Printf("hostname = %s\n", hostname)
 			}
 		}
+
 		defer rows.Close()
-		//time.Sleep(time.Second)
-		db.Close()
-	}
 }
