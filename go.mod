@@ -1,4 +1,4 @@
-module github.com/go-sql-driver-test
+module github.com/proxymysql-test
 
 go 1.14
 
